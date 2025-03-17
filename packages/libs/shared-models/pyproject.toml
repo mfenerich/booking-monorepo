@@ -22,6 +22,10 @@ readme = 'README.md'
 
   [tool.poetry.dependencies]
   python = ">=3.11,<3.13"
+  pydantic = "^2.10.6"
+  sqlalchemy = "^2.0.39"
+  pydantic-settings = "^2.8.1"
+  email-validator = "^2.2.0"
 
   [tool.poetry.group.dev.dependencies]
   autopep8 = "2.3.1"
