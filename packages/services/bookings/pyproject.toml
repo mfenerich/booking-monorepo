@@ -1,0 +1,56 @@
+[tool.coverage.run]
+branch = true
+source = [ "booking_bookings" ]
+
+[tool.coverage.report]
+exclude_lines = [ "if TYPE_CHECKING:" ]
+show_missing = true
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-report html:'../../../coverage/packages/services/bookings/html' --cov-report xml:'../../../coverage/packages/services/bookings/coverage.xml' --html='../../../reports/packages/services/bookings/unittests/html/index.html' --junitxml='../../../reports/packages/services/bookings/unittests/junit.xml'"
+
+[tool.poetry]
+name = "booking-bookings"
+version = "1.0.0"
+description = "Reservation management service"
+authors = [ ]
+license = "Proprietary"
+readme = "README.md"
+
+  [[tool.poetry.packages]]
+  include = "booking_bookings"
+
+  [tool.poetry.dependencies]
+  python = ">=3.11,<3.13"
+
+    [tool.poetry.dependencies.booking-auth]
+    path = "../../libs/auth"
+    develop = true
+
+    [tool.poetry.dependencies.booking-db]
+    path = "../../libs/db"
+    develop = true
+
+    [tool.poetry.dependencies.booking-common]
+    path = "../../libs/common"
+    develop = true
+
+    [tool.poetry.dependencies.booking-api]
+    path = "../../libs/api"
+    develop = true
+
+    [tool.poetry.dependencies.booking-shared-models]
+    path = "../../libs/shared-models"
+    develop = true
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "2.3.1"
+flake8 = "7.1.1"
+pytest = "8.3.4"
+pytest-sugar = "1.0.0"
+pytest-cov = "6.0.0"
+pytest-html = "4.1.1"
+
+[build-system]
+requires = [ "poetry-core" ]
+build-backend = "poetry.core.masonry.api"
