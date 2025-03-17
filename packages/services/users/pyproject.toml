@@ -3,7 +3,7 @@ branch = true
 source = [ "booking_users" ]
 
 [tool.coverage.report]
-exclude_lines = ['if TYPE_CHECKING:']
+exclude_lines = [ "if TYPE_CHECKING:" ]
 show_missing = true
 
 [tool.pytest.ini_options]
@@ -14,8 +14,8 @@ name = "booking-users"
 version = "1.0.0"
 description = "User management service"
 authors = [ ]
-license = 'Proprietary'
-readme = 'README.md'
+license = "Proprietary"
+readme = "README.md"
 
   [[tool.poetry.packages]]
   include = "booking_users"
@@ -23,14 +23,30 @@ readme = 'README.md'
   [tool.poetry.dependencies]
   python = ">=3.11,<3.13"
 
-  [tool.poetry.group.dev.dependencies]
-  autopep8 = "2.3.1"
-  flake8 = "7.1.1"
-  pytest = "8.3.4"
-  pytest-sugar = "1.0.0"
-  pytest-cov = "6.0.0"
-  pytest-html = "4.1.1"
+    [tool.poetry.dependencies.booking-auth]
+    path = "../../libs/auth"
+    develop = true
+
+    [tool.poetry.dependencies.booking-db]
+    path = "../../libs/db"
+    develop = true
+
+    [tool.poetry.dependencies.booking-common]
+    path = "../../libs/common"
+    develop = true
+
+    [tool.poetry.dependencies.booking-api]
+    path = "../../libs/api"
+    develop = true
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "2.3.1"
+flake8 = "7.1.1"
+pytest = "8.3.4"
+pytest-sugar = "1.0.0"
+pytest-cov = "6.0.0"
+pytest-html = "4.1.1"
 
 [build-system]
-requires = ["poetry-core"]
+requires = [ "poetry-core" ]
 build-backend = "poetry.core.masonry.api"
