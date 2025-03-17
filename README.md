@@ -87,3 +87,17 @@ And join the Nx community:
 - [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
 - [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+
+# Create a new app
+
+```sh
+npx nx generate @nxlv/python:poetry-project proj1 \
+  --projectType application \
+  --description='My Project 1' \
+  --packageName=pymonorepo-proj1 \
+  --moduleName=pymonorepo_proj1  \
+  --directory packages/proj1  \
+  --pyprojectPythonDependency=">=3.11,<3.13" \
+  --pyenvPythonVersion 3.11.2
+```
