@@ -39,6 +39,10 @@ readme = "README.md"
     path = "../../libs/api"
     develop = true
 
+    [tool.poetry.dependencies.booking-shared-models]
+    path = "../../libs/shared-models"
+    develop = true
+
 [tool.poetry.group.dev.dependencies]
 autopep8 = "2.3.1"
 flake8 = "7.1.1"
