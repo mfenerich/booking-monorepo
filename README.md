@@ -101,3 +101,11 @@ npx nx generate @nxlv/python:poetry-project proj1 \
   --pyprojectPythonDependency=">=3.11,<3.13" \
   --pyenvPythonVersion 3.11.2
 ```
+
+# Share virutal env
+
+```sh
+npx nx generate @nxlv/python:migrate-to-shared-venv \
+--pyprojectPythonDependency=">=3.11,<3.13" \
+--pyenvPythonVersion 3.11.2
+```
