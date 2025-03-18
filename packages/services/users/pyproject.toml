@@ -23,8 +23,6 @@ readme = "README.md"
   [tool.poetry.dependencies]
   python = ">=3.11,<3.13"
   uvicorn = "^0.34.0"
-  isort = "^6.0.1"
-  black = "^25.1.0"
 
     [tool.poetry.dependencies.booking-auth]
     path = "../../libs/auth"
@@ -53,6 +51,10 @@ pytest = "8.3.4"
 pytest-sugar = "1.0.0"
 pytest-cov = "6.0.0"
 pytest-html = "4.1.1"
+isort = "^6.0.1"
+black = "^25.1.0"
+pytest-asyncio = "^0.25.3"
+httpx = "^0.28.1"
 
 [build-system]
 requires = [ "poetry-core" ]

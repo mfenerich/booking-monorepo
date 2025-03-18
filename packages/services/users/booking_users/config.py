@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api/v1"
 
     # Database settings
-    DATABASE_URL: str = "sqlite+aiosqlite:///./users.db"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./../../../database.db"
 
     # CORS settings
     CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]

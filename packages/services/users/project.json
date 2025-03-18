@@ -52,28 +52,28 @@
     "format": {
       "executor": "@nxlv/python:run-commands",
       "options": {
-        "command": "poetry run black booking_users",
+        "command": "poetry run black booking_users tests",
         "cwd": "packages/services/users"
       }
     },
     "format-check": {
       "executor": "@nxlv/python:run-commands",
       "options": {
-        "command": "poetry run black --check booking_users",
+        "command": "poetry run black --check booking_users tests",
         "cwd": "packages/services/users"
       }
     },
     "fix-imports": {
       "executor": "@nxlv/python:run-commands",
       "options": {
-        "command": "poetry run isort booking_users",
+        "command": "poetry run isort booking_users tests",
         "cwd": "packages/services/users"
       }
     },
     "autopep8": {
       "executor": "@nxlv/python:run-commands",
       "options": {
-        "command": "poetry run autopep8 --in-place --recursive booking_users",
+        "command": "poetry run autopep8 --in-place --recursive booking_users tests",
         "cwd": "packages/services/users"
       }
     },
@@ -81,9 +81,9 @@
       "executor": "@nxlv/python:run-commands",
       "options": {
         "commands": [
-          "poetry run isort booking_users",
-          "poetry run autopep8 --in-place --recursive booking_users",
-          "poetry run black booking_users"
+          "poetry run isort booking_users tests",
+          "poetry run autopep8 --in-place --recursive booking_users tests",
+          "poetry run black booking_users tests"
         ],
         "cwd": "packages/services/users",
         "parallel": false
