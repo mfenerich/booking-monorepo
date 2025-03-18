@@ -1,6 +1,6 @@
 """Database connection utilities."""
 
-from typing import AsyncGenerator, Optional, Dict, Any
+from typing import Any, AsyncGenerator, Dict, Optional
 
 from booking_shared_models.models import Base
 from pydantic import BaseModel
@@ -28,22 +28,19 @@ class DatabaseClient:
     def __init__(self, settings: DatabaseSettings):
         """Initialize the database client with settings."""
         self.settings = settings
-        
+
         # Create engine options based on database type
         engine_options: Dict[str, Any] = {"echo": settings.echo, "future": True}
-        
+
         # Only add pooling options for non-SQLite databases or if explicitly specified
         if not settings.url.startswith("sqlite") or "?poolclass=" in settings.url:
             if settings.pool_size is not None:
                 engine_options["pool_size"] = settings.pool_size
             if settings.max_overflow is not None:
                 engine_options["max_overflow"] = settings.max_overflow
-        
-        self.engine = create_async_engine(
-            settings.url,
-            **engine_options
-        )
-        
+
+        self.engine = create_async_engine(settings.url, **engine_options)
+
         self.async_session = sessionmaker(
             self.engine, class_=AsyncSession, expire_on_commit=False
         )
