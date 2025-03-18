@@ -1,17 +1,19 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
-from sqlalchemy.sql import func
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import func
 
 Base = declarative_base()
+
 
 class User(Base):
     """
     Shared User model for use across all services.
-    
+
     This model defines the common user properties that are relevant to all services
     in the booking platform. Services that need additional user-related fields should
     extend this model or create related models that reference this one.
     """
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)

@@ -49,6 +49,46 @@
       },
       "cache": true
     },
+    "format": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run black booking_shared_models",
+        "cwd": "packages/libs/shared-models"
+      }
+    },
+    "format-check": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run black --check booking_shared_models",
+        "cwd": "packages/libs/shared-models"
+      }
+    },
+    "fix-imports": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run isort booking_shared_models",
+        "cwd": "packages/libs/shared-models"
+      }
+    },
+    "autopep8": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run autopep8 --in-place --recursive booking_shared_models",
+        "cwd": "packages/libs/shared-models"
+      }
+    },
+    "fix-all": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "commands": [
+          "poetry run isort booking_shared_models",
+          "poetry run autopep8 --in-place --recursive booking_shared_models",
+          "poetry run black booking_shared_models"
+        ],
+        "cwd": "packages/libs/shared-models",
+        "parallel": false
+      }
+    },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
