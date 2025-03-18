@@ -1,4 +1,5 @@
-from typing import Any, AsyncGenerator, Dict
+import asyncio
+from typing import Any, AsyncGenerator, Dict, Generator
 
 import pytest
 import pytest_asyncio
@@ -8,17 +9,22 @@ from booking_shared_models.models import Base, User
 from booking_shared_models.schemas import UserCreate
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from booking_users.main import create_app
 
-# Test database URL
-TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
+# Use a persistent in-memory SQLite database that can be shared between connections
+TEST_DB_URL = "sqlite+aiosqlite:///file:memdb1?mode=memory&cache=shared&uri=true"
 
-# NOTE: We're not redefining event_loop fixture anymore
-# Instead, using the built-in one from pytest-asyncio
+
+@pytest.fixture(scope="session")
+def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
+    """Create an instance of the default event loop for the test session."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -34,6 +40,16 @@ async def db_client() -> AsyncGenerator[DatabaseClient, None]:
     # Create tables
     async with client.engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+        # Verify tables were created
+        result = await conn.execute(
+            text("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
+        )
+        tables = result.fetchall()
+        if not tables:
+            raise Exception(
+                "Users table was not created! Database schema setup failed."
+            )
 
     yield client
 
@@ -72,7 +88,10 @@ def client(app: FastAPI) -> TestClient:
 @pytest_asyncio.fixture
 async def async_client(app: FastAPI) -> AsyncGenerator[AsyncClient, None]:
     """Create an async test client for asynchronous tests."""
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    # Use ASGITransport to connect AsyncClient to the FastAPI app
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
         yield ac
 
 
