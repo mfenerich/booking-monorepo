@@ -18,7 +18,7 @@ class TokenSettings(BaseModel):
 class TokenData(BaseModel):
     """Model for token payload data."""
 
-    sub: str
+    sub: str  # User ID
     exp: datetime
     additional_claims: Optional[Dict[str, Any]] = None
 
