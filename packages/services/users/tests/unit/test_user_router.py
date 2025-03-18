@@ -6,6 +6,14 @@ import pytest
 from booking_api import ConflictError, NotFoundError
 from booking_shared_models.schemas import User
 
+# Constants for URIs
+BASE_URI = "/api/v1/users"
+REGISTER_URI = f"{BASE_URI}/register"
+USER_BY_ID_URI = f"{BASE_URI}/{{user_id}}"
+USER_BY_EMAIL_URI = f"{BASE_URI}/by-email/{{email}}"
+USER_BY_USERNAME_URI = f"{BASE_URI}/by-username/{{username}}"
+USERS_URI = f"{BASE_URI}/"
+
 
 @pytest.fixture
 def mock_user_dict():
@@ -44,7 +52,7 @@ class TestRegisterEndpoint:
             mock_service.return_value = mock_user
 
             # Act
-            response = client.post("/api/v1/users/register", json=user_data)
+            response = client.post(REGISTER_URI, json=user_data)
             # Assert
             assert response.status_code == 201
             result = response.json()
@@ -62,7 +70,7 @@ class TestRegisterEndpoint:
         }
 
         # Act
-        response = client.post("/api/v1/users/register", json=user_data)
+        response = client.post(REGISTER_URI, json=user_data)
 
         # Assert
         assert response.status_code == 422  # Validation error
@@ -89,7 +97,7 @@ class TestRegisterEndpoint:
             )
 
             # Act
-            response = client.post("/api/v1/users/register", json=user_data)
+            response = client.post(REGISTER_URI, json=user_data)
 
             # Assert
             assert response.status_code == 409
@@ -113,7 +121,7 @@ class TestGetUserEndpoints:
             mock_service.return_value = mock_user
 
             # Act
-            response = client.get(f"/api/v1/users/{user_id}")
+            response = client.get(USER_BY_ID_URI.format(user_id=user_id))
 
             # Assert
             assert response.status_code == 200
@@ -141,7 +149,7 @@ class TestGetUserEndpoints:
             )
 
             # Act
-            response = client.get(f"/api/v1/users/{user_id}")
+            response = client.get(USER_BY_ID_URI.format(user_id=user_id))
 
             # Assert
             assert response.status_code == 404
@@ -161,7 +169,7 @@ class TestGetUserEndpoints:
             mock_service.return_value = mock_user
 
             # Act
-            response = client.get(f"/api/v1/users/by-email/{email}")
+            response = client.get(USER_BY_EMAIL_URI.format(email=email))
 
             # Assert
             assert response.status_code == 200
@@ -177,7 +185,7 @@ class TestGetUserEndpoints:
         invalid_email = "invalid-email"
 
         # Act
-        response = client.get(f"/api/v1/users/by-email/{invalid_email}")
+        response = client.get(USER_BY_EMAIL_URI.format(email=invalid_email))
 
         # Assert
         assert response.status_code == 422  # Validation error
@@ -201,7 +209,7 @@ class TestGetUserEndpoints:
             mock_service.return_value = mock_user
 
             # Act
-            response = client.get(f"/api/v1/users/by-username/{username}")
+            response = client.get(USER_BY_USERNAME_URI.format(username=username))
 
             # Assert
             assert response.status_code == 200
@@ -227,7 +235,7 @@ class TestListUsersEndpoint:
             mock_service.return_value = (users, total)
 
             # Act
-            response = client.get("/api/v1/users/?skip=0&limit=10")
+            response = client.get(f"{USERS_URI}?skip=0&limit=10")
 
             # Assert
             assert response.status_code == 200
@@ -252,7 +260,7 @@ class TestListUsersEndpoint:
             mock_service.return_value = (users, total)
 
             # Act
-            response = client.get("/api/v1/users/?skip=20&limit=10")
+            response = client.get(f"{USERS_URI}?skip=20&limit=10")
 
             # Assert
             assert response.status_code == 200
@@ -269,7 +277,7 @@ class TestListUsersEndpoint:
     def test_list_users_negative_skip(self, client):
         """Test list users with negative skip parameter."""
         # Act
-        response = client.get("/api/v1/users/?skip=-10&limit=10")
+        response = client.get(f"{USERS_URI}?skip=-10&limit=10")
 
         # Assert
         assert response.status_code == 422  # Validation error
@@ -282,7 +290,7 @@ class TestListUsersEndpoint:
     def test_list_users_too_large_limit(self, client):
         """Test list users with limit exceeding maximum."""
         # Act
-        response = client.get("/api/v1/users/?skip=0&limit=1000")
+        response = client.get(f"{USERS_URI}?skip=0&limit=1000")
 
         # Assert
         assert response.status_code == 422  # Validation error
@@ -311,7 +319,9 @@ class TestUpdateUserEndpoint:
             mock_service.return_value = updated_user
 
             # Act
-            response = client.put(f"/api/v1/users/{user_id}", json=update_data)
+            response = client.put(
+                USER_BY_ID_URI.format(user_id=user_id), json=update_data
+            )
 
             # Assert
             assert response.status_code == 200
@@ -335,7 +345,9 @@ class TestUpdateUserEndpoint:
             )
 
             # Act
-            response = client.put(f"/api/v1/users/{user_id}", json=update_data)
+            response = client.put(
+                USER_BY_ID_URI.format(user_id=user_id), json=update_data
+            )
 
             # Assert
             assert response.status_code == 404
@@ -358,7 +370,9 @@ class TestUpdateUserEndpoint:
             )
 
             # Act
-            response = client.put(f"/api/v1/users/{user_id}", json=update_data)
+            response = client.put(
+                USER_BY_ID_URI.format(user_id=user_id), json=update_data
+            )
 
             # Assert
             assert response.status_code == 409
@@ -374,7 +388,7 @@ class TestUpdateUserEndpoint:
         update_data = {"email": "invalid-email"}
 
         # Act
-        response = client.put(f"/api/v1/users/{user_id}", json=update_data)
+        response = client.put(USER_BY_ID_URI.format(user_id=user_id), json=update_data)
 
         # Assert
         assert response.status_code == 422  # Validation error
@@ -401,7 +415,7 @@ class TestDeleteUserEndpoint:
             mock_service.return_value = True
 
             # Act
-            response = client.delete(f"/api/v1/users/{user_id}")
+            response = client.delete(USER_BY_ID_URI.format(user_id=user_id))
 
             # Assert
             assert response.status_code == 200
@@ -431,7 +445,7 @@ class TestDeleteUserEndpoint:
             )
 
             # Act
-            response = client.delete(f"/api/v1/users/{user_id}")
+            response = client.delete(USER_BY_ID_URI.format(user_id=user_id))
 
             # Assert
             assert response.status_code == 404
