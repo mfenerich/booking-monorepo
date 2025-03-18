@@ -1,6 +1,7 @@
 """Database transaction utilities."""
 
 from contextlib import asynccontextmanager
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -8,10 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 async def transaction(session: AsyncSession):
     """
     Transaction context manager.
-    
+
     This context manager ensures that a transaction is committed on success
     and rolled back on failure.
-    
+
     Example:
         ```
         async with transaction(session):

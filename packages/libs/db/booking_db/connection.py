@@ -1,15 +1,16 @@
 """Database connection utilities."""
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
 from typing import AsyncGenerator, Optional
-from pydantic import BaseModel
 
 from booking_shared_models.models import Base
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 
 
 class DatabaseSettings(BaseModel):
     """Database connection settings."""
+
     url: str
     echo: bool = False
     pool_size: int = 5
@@ -19,11 +20,11 @@ class DatabaseSettings(BaseModel):
 class DatabaseClient:
     """
     Database client for managing connections and sessions.
-    
+
     This class provides a convenient way to create and manage database
     connections and sessions using SQLAlchemy's async support.
     """
-    
+
     def __init__(self, settings: DatabaseSettings):
         """Initialize the database client with settings."""
         self.settings = settings
@@ -32,14 +33,12 @@ class DatabaseClient:
             echo=settings.echo,
             pool_size=settings.pool_size,
             max_overflow=settings.max_overflow,
-            future=True
+            future=True,
         )
         self.async_session = sessionmaker(
-            self.engine,
-            class_=AsyncSession,
-            expire_on_commit=False
+            self.engine, class_=AsyncSession, expire_on_commit=False
         )
-    
+
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
         """Get a database session."""
         async with self.async_session() as session:
@@ -47,12 +46,12 @@ class DatabaseClient:
                 yield session
             finally:
                 await session.close()
-    
+
     async def create_tables(self):
         """Create all database tables."""
         async with self.engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-    
+
     async def close(self):
         """Close all connections."""
         await self.engine.dispose()
@@ -79,7 +78,7 @@ def initialize_db(settings: DatabaseSettings) -> DatabaseClient:
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Get a database session.
-    
+
     This is a FastAPI dependency that provides a database session.
     """
     client = get_db_client()

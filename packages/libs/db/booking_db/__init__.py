@@ -1,14 +1,14 @@
 """Database models and utilities."""
 
 from .connection import (
-    DatabaseSettings,
     DatabaseClient,
+    DatabaseSettings,
+    get_db,
     get_db_client,
     initialize_db,
-    get_db
 )
-from .transaction import transaction
 from .repository import Repository
+from .transaction import transaction
 
 __all__ = [
     "DatabaseSettings",
@@ -17,5 +17,5 @@ __all__ = [
     "initialize_db",
     "get_db",
     "transaction",
-    "Repository"
+    "Repository",
 ]
