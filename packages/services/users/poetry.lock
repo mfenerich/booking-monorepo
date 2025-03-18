@@ -103,6 +103,11 @@ python-versions = ">=3.11,<3.13"
 files = []
 develop = true
 
+[package.dependencies]
+booking-shared-models = {path = "../shared-models", develop = true}
+pydantic = "^2.10.6"
+sqlalchemy = "^2.0.39"
+
 [package.source]
 type = "directory"
 url = "../../libs/db"

@@ -3,7 +3,7 @@ branch = true
 source = [ "booking_db" ]
 
 [tool.coverage.report]
-exclude_lines = ['if TYPE_CHECKING:']
+exclude_lines = [ "if TYPE_CHECKING:" ]
 show_missing = true
 
 [tool.pytest.ini_options]
@@ -14,23 +14,29 @@ name = "booking-db"
 version = "1.0.0"
 description = "Database models and utilities"
 authors = [ ]
-license = 'Proprietary'
-readme = 'README.md'
+license = "Proprietary"
+readme = "README.md"
 
   [[tool.poetry.packages]]
   include = "booking_db"
 
   [tool.poetry.dependencies]
   python = ">=3.11,<3.13"
+  sqlalchemy = "^2.0.39"
+  pydantic = "^2.10.6"
 
-  [tool.poetry.group.dev.dependencies]
-  autopep8 = "2.3.1"
-  flake8 = "7.1.1"
-  pytest = "8.3.4"
-  pytest-sugar = "1.0.0"
-  pytest-cov = "6.0.0"
-  pytest-html = "4.1.1"
+    [tool.poetry.dependencies.booking-shared-models]
+    path = "../shared-models"
+    develop = true
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "2.3.1"
+flake8 = "7.1.1"
+pytest = "8.3.4"
+pytest-sugar = "1.0.0"
+pytest-cov = "6.0.0"
+pytest-html = "4.1.1"
 
 [build-system]
-requires = ["poetry-core"]
+requires = [ "poetry-core" ]
 build-backend = "poetry.core.masonry.api"
