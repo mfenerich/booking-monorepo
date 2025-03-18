@@ -25,6 +25,8 @@ readme = "README.md"
   uvicorn = "^0.34.0"
   httpx = "^0.28.1"
   python-multipart = "^0.0.20"
+  asyncpg = "^0.30.0"
+  psycopg2-binary = "^2.9.10"
 
     [tool.poetry.dependencies.booking-auth]
     path = "../../libs/auth"
