@@ -49,6 +49,46 @@
       },
       "cache": true
     },
+    "format": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run black booking_api",
+        "cwd": "packages/libs/api"
+      }
+    },
+    "format-check": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run black --check booking_api",
+        "cwd": "packages/libs/api"
+      }
+    },
+    "fix-imports": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run isort booking_api",
+        "cwd": "packages/libs/api"
+      }
+    },
+    "autopep8": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run autopep8 --in-place --recursive booking_api",
+        "cwd": "packages/libs/api"
+      }
+    },
+    "fix-all": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "commands": [
+          "poetry run isort booking_api",
+          "poetry run autopep8 --in-place --recursive booking_api",
+          "poetry run black booking_api"
+        ],
+        "cwd": "packages/libs/api",
+        "parallel": false
+      }
+    },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
