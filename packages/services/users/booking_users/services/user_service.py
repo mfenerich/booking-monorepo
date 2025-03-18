@@ -111,11 +111,12 @@ async def get_user_by_username(session: AsyncSession, username: str) -> UserSche
     Raises:
         NotFoundError: If user with the given username does not exist
     """
-    user = await user_repository.get_by_username(session, username)
-    if not user:
+    user_model = await user_repository.get_by_username(session, username)
+    if not user_model:
         raise NotFoundError(f"User with username {username} not found")
 
-    return UserSchema.model_validate(user)
+    # Don't transform to schema yet, we need the hashed_password
+    return user_model
 
 
 async def list_users(

@@ -8,6 +8,8 @@ from booking_db import DatabaseSettings, initialize_db
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from booking_users.routers.auth_router import router as auth_router
+
 from .config import settings
 from .routers import router as users_router
 
@@ -66,6 +68,7 @@ def create_app() -> FastAPI:
 
     # Include routers
     app.include_router(users_router, prefix=settings.API_PREFIX)
+    app.include_router(auth_router, prefix=settings.API_PREFIX)
 
     @app.get("/")
     async def root():

@@ -27,11 +27,6 @@ class Settings(BaseSettings):
     # CORS settings
     CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
 
-    # Auth settings
-    SECRET_KEY: str = "supersecretkey"  # CHANGE IN PRODUCTION!
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-
 
 # Create settings instance
 settings = Settings()
