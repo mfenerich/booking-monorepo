@@ -70,7 +70,14 @@
         "verbose": false,
         "debug": false
       }
-    }
+    },
+    "serve": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run python -m booking_users.main",
+        "cwd": "packages/services/users"
+      }
+    } 
   },
   "tags": [],
   "release": {

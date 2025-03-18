@@ -26,7 +26,7 @@ class UserInDB(UserBase):
     hashed_password: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class User(UserBase):
     """User schema for API responses (excludes sensitive data)."""
@@ -35,4 +35,4 @@ class User(UserBase):
     updated_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -1,6 +1,7 @@
 """Main application module for users service."""
 
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -18,15 +19,39 @@ logging.basicConfig(
 logger = logging.getLogger("booking_users")
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan event handler for FastAPI."""
+    # Startup
+    logger.info("Initializing database...")
+    db_settings = DatabaseSettings(
+        url=settings.DATABASE_URL,
+        echo=settings.DEBUG
+    )
+    db_client = initialize_db(db_settings)
+    await db_client.create_tables()
+    logger.info("Database initialized successfully")
+    
+    yield
+    
+    # Shutdown
+    from booking_db import get_db_client
+    logger.info("Closing database connections...")
+    await get_db_client().close()
+    logger.info("Database connections closed")
+
+
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
-    # Create FastAPI app
+    # Create FastAPI app with explicitly set docs URL (not using API prefix)
     app = FastAPI(
         title=settings.APP_NAME,
         version=settings.APP_VERSION,
         debug=settings.DEBUG,
-        docs_url="/docs" if settings.DEBUG else None,
-        redoc_url="/redoc" if settings.DEBUG else None,
+        lifespan=lifespan,
+        # Set docs URL explicitly to root level
+        docs_url="/docs",  
+        redoc_url="/redoc"
     )
     
     # Configure exception handlers
@@ -43,25 +68,17 @@ def create_app() -> FastAPI:
     
     # Include routers
     app.include_router(users_router, prefix=settings.API_PREFIX)
-    
-    # Database initialization
-    @app.on_event("startup")
-    async def startup():
-        logger.info("Initializing database...")
-        db_settings = DatabaseSettings(
-            url=settings.DATABASE_URL,
-            echo=settings.DEBUG
-        )
-        db_client = initialize_db(db_settings)
-        await db_client.create_tables()
-        logger.info("Database initialized successfully")
-    
-    @app.on_event("shutdown")
-    async def shutdown():
-        from booking_db import get_db_client
-        logger.info("Closing database connections...")
-        await get_db_client().close()
-        logger.info("Database connections closed")
+
+    @app.get("/")
+    async def root():
+        return {
+            "message": "Welcome to Booking Users Service",
+            "docs": "/docs",
+            "api_prefix": settings.API_PREFIX,
+            "endpoints": [
+                f"{settings.API_PREFIX}/users/register"
+            ]
+        }
     
     return app
 
