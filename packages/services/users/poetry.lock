@@ -200,8 +200,6 @@ develop = true
 
 [package.dependencies]
 bcrypt = "^4.3.0"
-black = "^25.1.0"
-isort = "^6.0.1"
 passlib = "^1.7.4"
 pydantic = "^2.10.6"
 python-jose = "^3.4.0"
@@ -1276,4 +1274,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "377ee8d432c7cb15cce46b76931a9c38323f3d72a4320381888cc633119129ed"
+content-hash = "3e59cbf6a1cb9e54333cf29a5b7f1335b8c9f4e20d086040334c0c066c00ba7c"
