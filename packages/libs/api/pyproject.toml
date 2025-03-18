@@ -22,6 +22,8 @@ readme = 'README.md'
 
   [tool.poetry.dependencies]
   python = ">=3.11,<3.13"
+  pydantic = "^2.10.6"
+  fastapi = "^0.115.11"
 
   [tool.poetry.group.dev.dependencies]
   autopep8 = "2.3.1"
