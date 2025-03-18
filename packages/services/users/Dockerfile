@@ -31,7 +31,7 @@ RUN ls -la /app/packages/services/users && \
     find /app/packages/services/users -name ".venv" -type d
 
 # Production stage
-FROM python:3.12.0-slim as production-image
+FROM python:3.12.0-slim AS production-image
 
 ARG APPLICATION_SERVER_PORT=8000
 
