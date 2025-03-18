@@ -1,6 +1,7 @@
 """User router for API endpoints."""
 
 from booking_api import PaginatedResponse, SuccessResponse
+from booking_auth.dependencies import get_authenticated_user_id
 from booking_db import get_db
 from booking_shared_models.schemas import User, UserCreate, UserUpdate
 from fastapi import APIRouter, Depends, Query, status
@@ -43,7 +44,9 @@ async def register(
     description="Retrieve a user by their ID",
 )
 async def get_user_by_id(
-    user_id: int, session: AsyncSession = Depends(get_db)
+    user_id: int,
+    session: AsyncSession = Depends(get_db),
+    _: int = Depends(get_authenticated_user_id),
 ) -> SuccessResponse[User]:
     """Get user by ID endpoint."""
     user = await get_user(session, user_id)
@@ -57,7 +60,9 @@ async def get_user_by_id(
     description="Retrieve a user by their email address",
 )
 async def get_by_email(
-    email: EmailStr, session: AsyncSession = Depends(get_db)
+    email: EmailStr,
+    session: AsyncSession = Depends(get_db),
+    _: int = Depends(get_authenticated_user_id),
 ) -> SuccessResponse[User]:
     """Get user by email endpoint."""
     user = await get_user_by_email(session, email)
@@ -71,7 +76,9 @@ async def get_by_email(
     description="Retrieve a user by their username",
 )
 async def get_by_username(
-    username: str, session: AsyncSession = Depends(get_db)
+    username: str,
+    session: AsyncSession = Depends(get_db),
+    _: int = Depends(get_authenticated_user_id),
 ) -> SuccessResponse[User]:
     """Get user by username endpoint."""
     user = await get_user_by_username(session, username)
@@ -90,6 +97,7 @@ async def get_users(
         100, ge=1, le=500, description="Maximum number of records to return"
     ),
     session: AsyncSession = Depends(get_db),
+    _: int = Depends(get_authenticated_user_id),
 ) -> PaginatedResponse[User]:
     """List users endpoint."""
     users, total = await list_users(session, skip=skip, limit=limit)
@@ -109,7 +117,10 @@ async def get_users(
     description="Update a user's information by their ID",
 )
 async def update_user_by_id(
-    user_id: int, user_data: UserUpdate, session: AsyncSession = Depends(get_db)
+    user_id: int,
+    user_data: UserUpdate,
+    session: AsyncSession = Depends(get_db),
+    _: int = Depends(get_authenticated_user_id),
 ) -> SuccessResponse[User]:
     """Update user endpoint."""
     user = await update_user(session, user_id, user_data)
@@ -123,7 +134,9 @@ async def update_user_by_id(
     description="Delete a user by their ID",
 )
 async def delete_user_by_id(
-    user_id: int, session: AsyncSession = Depends(get_db)
+    user_id: int,
+    session: AsyncSession = Depends(get_db),
+    _: int = Depends(get_authenticated_user_id),
 ) -> SuccessResponse:
     """Delete user endpoint."""
     await delete_user(session, user_id)
