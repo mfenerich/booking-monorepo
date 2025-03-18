@@ -49,6 +49,46 @@
       },
       "cache": true
     },
+    "format": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run black booking_db",
+        "cwd": "packages/libs/db"
+      }
+    },
+    "format-check": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run black --check booking_db",
+        "cwd": "packages/libs/db"
+      }
+    },
+    "fix-imports": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run isort booking_db",
+        "cwd": "packages/libs/db"
+      }
+    },
+    "autopep8": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "command": "poetry run autopep8 --in-place --recursive booking_db",
+        "cwd": "packages/libs/db"
+      }
+    },
+    "fix-all": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "commands": [
+          "poetry run isort booking_db",
+          "poetry run autopep8 --in-place --recursive booking_db",
+          "poetry run black booking_db"
+        ],
+        "cwd": "packages/libs/db",
+        "parallel": false
+      }
+    },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
