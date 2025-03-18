@@ -182,9 +182,7 @@ files = []
 develop = true
 
 [package.dependencies]
-black = "^25.1.0"
 fastapi = "^0.115.11"
-isort = "^6.0.1"
 pydantic = "^2.10.6"
 
 [package.source]
@@ -1247,4 +1245,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "cf9a6dc1f6f3b7b1179819968391c9be016d8484a2607fca20505960d3364a67"
+content-hash = "f461c8222c22ed68777ef0346fdfb15958c919d0be21ee7c0b595e4905f982c8"
