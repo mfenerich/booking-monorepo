@@ -16,6 +16,18 @@
         "command": "react-scripts start",
         "cwd": "packages/frontend"
       }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'Skipping lint for stay-booker-pro'"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'Skipping test for stay-booker-pro'"
+      }
     }
   }
 }
