@@ -67,8 +67,8 @@ def create_app() -> FastAPI:
     )
 
     # Include routers
-    app.include_router(users_router, prefix=settings.API_PREFIX)
     app.include_router(auth_router, prefix=settings.API_PREFIX)
+    app.include_router(users_router, prefix=settings.API_PREFIX)
 
     @app.get("/")
     async def root():
