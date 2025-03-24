@@ -5,26 +5,32 @@ class NetworkAdapter {
   static #API_CONFIG = {
     MIRAGE: window.location.origin,
     EXPRESS: 'http://localhost:4000',
+    API: 'http://localhost:8000/',
   };
-  static #API_URL = NetworkAdapter.#API_CONFIG.MIRAGE;
-  async get(endpoint, params = {}) {
-    const endpointURL = new URL(endpoint, NetworkAdapter.#API_URL);
-    try {
-      const url = new URL(endpointURL, window.location.origin);
-
-      Object.entries(params).forEach(([key, value]) => {
-        url.searchParams.append(key, value);
-      });
-
-      const response = await fetch(url.toString(), { credentials: 'include' });
-      return await response.json();
-    } catch (error) {
-      return {
-        data: {},
-        errors: [error.message],
-      };
+  static #API_URL = NetworkAdapter.#API_CONFIG.API;
+  async get(endpoint, params = {}, options = {}) {
+    const base = options.notUseMirage
+      ? NetworkAdapter.#API_CONFIG.API
+      : NetworkAdapter.#API_CONFIG.MIRAGE;
+    console.log('base', base, endpoint);
+    const url = new URL(endpoint, base);
+    Object.entries(params).forEach(([key, value]) => {
+      url.searchParams.append(key, value);
+    });
+  
+    const response = await fetch(url.toString(), {
+      credentials: 'include',
+    });
+    const json = await response.json();
+  
+    if (!response.ok) {
+      // Create an error with response status and data.
+      const error = new Error('Network response was not ok');
+      error.response = { status: response.status, data: json };
+      throw error;
     }
-  }
+    return json;
+  }  
 
   async post(endpoint, data = {}) {
     try {

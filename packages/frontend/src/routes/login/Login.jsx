@@ -1,54 +1,31 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { networkAdapter } from 'services/NetworkAdapter';
-import React, { useContext } from 'react';
 import { AuthContext } from 'contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import validations from 'utils/validations';
 import Toast from 'components/ux/toast/Toast';
 import { LOGIN_MESSAGES } from 'utils/constants';
 
-/**
- * Login Component
- * Renders a login form allowing users to sign in to their account.
- * It handles user input for email and password, submits login credentials to the server,
- * and navigates the user to their profile upon successful authentication.
- * Displays an error message for invalid login attempts.
- */
 const Login = () => {
   const navigate = useNavigate();
   const context = useContext(AuthContext);
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
-  });
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const [errorMessage, setErrorMessage] = useState(false);
-
-  /**
-   * Handles input changes for the login form fields.
-   * Updates the loginData state with the field values.
-   * @param {Object} e - The event object from the input field.
-   */
   const handleInputChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  /**
-   * Handles the submission of the login form.
-   * Attempts to authenticate the user with the provided credentials.
-   * Navigates to the user profile on successful login or sets an error message on failure.
-   * @param {Object} e - The event object from the form submission.
-   */
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
     if (validations.validate('email', loginData.email)) {
-      const response = await networkAdapter.post('api/users/login', loginData);
+      const response = await networkAdapter.post('api/v1/users/login', loginData);
       if (response && response.data.token) {
-        context.triggerAuthCheck();
+        // Wait for the auth check to finish updating the state
+        await context.triggerAuthCheck();
         navigate('/user-profile');
-      } else if (response && response.errors.length > 0) {
+      } else if (response && response.errors && response.errors.length > 0) {
         setErrorMessage(response.errors[0]);
       }
     } else {
@@ -56,9 +33,6 @@ const Login = () => {
     }
   };
 
-  /**
-   * Clears the current error message displayed to the user.
-   */
   const dismissError = () => {
     setErrorMessage('');
   };
@@ -72,12 +46,8 @@ const Login = () => {
             className="w-full max-w-lg p-4 md:p-10 shadow-md"
           >
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-extrabold text-brand">
-                Welcome Back
-              </h2>
-              <p className="text-gray-500">
-                Log in to continue to your account
-              </p>
+              <h2 className="text-3xl font-extrabold text-brand">Welcome Back</h2>
+              <p className="text-gray-500">Log in to continue to your account</p>
             </div>
             <div className="mb-6">
               <input
@@ -102,11 +72,7 @@ const Login = () => {
               />
             </div>
             {errorMessage && (
-              <Toast
-                type="error"
-                message={errorMessage}
-                dismissError={dismissError}
-              />
+              <Toast type="error" message={errorMessage} dismissError={dismissError} />
             )}
             <div className="items-center">
               <div>

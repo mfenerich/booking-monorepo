@@ -20,7 +20,7 @@ const NavbarItems = ({ isAuthenticated, onHamburgerMenuToggle }) => {
    * Handles the logout action by calling the logout API and updating the authentication state.
    */
   const handleLogout = async () => {
-    await networkAdapter.post('api/users/logout');
+    await networkAdapter.post('api/v1/users/logout', {}, { notUseMirage: true }); // TODO: Remove notUseMirage
     context.triggerAuthCheck();
     navigate('/login');
   };

@@ -79,3 +79,22 @@ def decode_access_token(token: str, settings: TokenSettings) -> TokenData:
         exp=datetime.fromtimestamp(payload["exp"]),
         additional_claims=additional_claims or None,
     )
+
+
+def set_access_token_cookie(
+    response: Any,
+    token: str,
+    settings: TokenSettings,
+    expires_delta: Optional[timedelta] = None,
+) -> None:
+    """
+    Create a JWT access token and set it as an HTTP-only cookie.
+    """
+    from .cookies import set_jwt_cookie
+
+    set_jwt_cookie(
+        response=response,
+        token=token,
+        expires_delta=expires_delta
+        or timedelta(minutes=settings.access_token_expire_minutes),
+    )

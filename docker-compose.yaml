@@ -40,7 +40,7 @@ services:
       JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30
       USERS_SERVICE_URL: http://users-service:8000
       DEBUG: "true"
-      CORS_ORIGINS: '["http://localhost:3000", "http://frontend:3000"]'
+      CORS_ORIGINS: '["http://localhost:3000", "http://frontend:3000", "http://0.0.0.0:3000", "http://localhost:8000", "http://localhost:8080"]'
 
     ports:
       - "8000:8000"
@@ -53,10 +53,13 @@ services:
     container_name: booking-frontend
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       REACT_APP_API_URL: http://localhost:8000/api/v1
     ports:
-      - "3000:80"
+      - "3000:3000"
+    volumes:
+      - ./:/app
+    command: ["npx", "nx", "run", "stay-booker-pro:serve"]
     depends_on:
       - users-service
 

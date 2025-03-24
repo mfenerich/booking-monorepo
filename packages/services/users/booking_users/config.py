@@ -25,7 +25,13 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./../../../database.db"
 
     # CORS settings
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:3000",  # React dev server
+        "http://frontend:3000",  # React container in Docker
+        "http://0.0.0.0:3000",  # React container in Docker
+        "http://localhost:8000",  # API service
+        "http://localhost:8080",  # API gateway
+    ]
 
 
 # Create settings instance

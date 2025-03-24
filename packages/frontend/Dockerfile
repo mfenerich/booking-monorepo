@@ -1,32 +1,20 @@
-# Build stage
-FROM node:18-alpine AS build
+# Dockerfile.dev
+FROM node:18-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
-COPY package.json package-lock.json ./
-COPY nx.json ./
-COPY packages/frontend/package.json ./packages/frontend/
+# Copy workspace-level files so that Nx can initialize
+COPY package.json package-lock.json nx.json ./
 RUN npm install
 
-# Copy all files
+# Copy the entire repository
 COPY . .
 
-# Build the frontend
-RUN npx nx build stay-booker-pro --prod
+# Set environment variable so that the development server binds to 0.0.0.0
+ENV HOST=0.0.0.0
 
-# Production stage with Nginx
-FROM nginx:alpine
+# Expose port 3000
+EXPOSE 3000
 
-# Copy the build output from the build stage
-COPY --from=build /app/packages/frontend/build /usr/share/nginx/html
-
-# Copy Nginx configuration
-COPY packages/frontend/nginx/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Use Nx to serve your app on port 3000 and bind to 0.0.0.0
+CMD ["npx", "nx", "serve", "stay-booker-pro", "--host", "0.0.0.0", "--port", "3000"]
