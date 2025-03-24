@@ -3,6 +3,7 @@
 from booking_api import ConflictError, NotFoundError
 from booking_auth import get_password_hash
 from booking_db import transaction
+from booking_shared_models.models.user import User
 from booking_shared_models.schemas import User as UserSchema
 from booking_shared_models.schemas import UserCreate, UserUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -55,7 +56,7 @@ async def register_user(session: AsyncSession, user_data: UserCreate) -> UserSch
     return UserSchema.model_validate(user)
 
 
-async def get_user(session: AsyncSession, user_id: int) -> UserSchema:
+async def get_user(session: AsyncSession, user_id: int) -> User:
     """
     Get user by ID.
 
@@ -73,10 +74,10 @@ async def get_user(session: AsyncSession, user_id: int) -> UserSchema:
     if not user:
         raise NotFoundError(f"User with ID {user_id} not found")
 
-    return UserSchema.model_validate(user)
+    return user
 
 
-async def get_user_by_email(session: AsyncSession, email: str) -> UserSchema:
+async def get_user_by_email(session: AsyncSession, email: str) -> User:
     """
     Get user by email.
 
@@ -94,10 +95,10 @@ async def get_user_by_email(session: AsyncSession, email: str) -> UserSchema:
     if not user:
         raise NotFoundError(f"User with email {email} not found")
 
-    return UserSchema.model_validate(user)
+    return user
 
 
-async def get_user_by_username(session: AsyncSession, username: str) -> UserSchema:
+async def get_user_by_username(session: AsyncSession, username: str) -> User:
     """
     Get user by username.
 
@@ -115,7 +116,6 @@ async def get_user_by_username(session: AsyncSession, username: str) -> UserSche
     if not user_model:
         raise NotFoundError(f"User with username {username} not found")
 
-    # Don't transform to schema yet, we need the hashed_password
     return user_model
 
 
