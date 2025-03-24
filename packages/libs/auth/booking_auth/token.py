@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
+from fastapi import Response
 from jose import jwt
 from pydantic import BaseModel
 
@@ -78,4 +79,23 @@ def decode_access_token(token: str, settings: TokenSettings) -> TokenData:
         sub=payload["sub"],
         exp=datetime.fromtimestamp(payload["exp"]),
         additional_claims=additional_claims or None,
+    )
+
+
+def set_access_token_cookie(
+    response: Response,
+    token: str,
+    settings: TokenSettings,
+    expires_delta: Optional[timedelta] = None,
+) -> None:
+    """
+    Create a JWT access token and set it as an HTTP-only cookie.
+    """
+    from .cookies import set_jwt_cookie
+
+    set_jwt_cookie(
+        response=response,
+        token=token,
+        expires_delta=expires_delta
+        or timedelta(minutes=settings.access_token_expire_minutes),
     )
