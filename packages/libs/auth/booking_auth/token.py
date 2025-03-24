@@ -3,7 +3,6 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
-from fastapi import Response
 from jose import jwt
 from pydantic import BaseModel
 
@@ -83,7 +82,7 @@ def decode_access_token(token: str, settings: TokenSettings) -> TokenData:
 
 
 def set_access_token_cookie(
-    response: Response,
+    response: Any,
     token: str,
     settings: TokenSettings,
     expires_delta: Optional[timedelta] = None,
