@@ -5,6 +5,7 @@ from booking_auth import TokenSettings, create_access_token, verify_password
 from booking_auth.dependencies import get_authenticated_user_id
 from booking_auth.middleware import get_token_settings
 from booking_db import get_db
+from booking_shared_models.schemas import User as UserSchema
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -39,7 +40,7 @@ async def check_auth_status(
         AuthStatusResponse: A response containing the authentication status and user details.
     """
     try:
-        user = await get_user(session, user_id)
+        user = UserSchema.model_validate(await get_user(session, user_id))
         logger.info("Authentication check successful for user ID: %d", user_id)
         return AuthStatusResponse(isAuthenticated=True, userDetails=user)
     except Exception:

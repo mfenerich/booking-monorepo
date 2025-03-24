@@ -5,7 +5,8 @@ import logging
 from booking_api import PaginatedResponse, SuccessResponse
 from booking_auth.dependencies import get_authenticated_user_id
 from booking_db import get_db
-from booking_shared_models.schemas import User, UserCreate, UserUpdate
+from booking_shared_models.schemas import User as UserSchema
+from booking_shared_models.schemas import UserCreate, UserUpdate
 from fastapi import APIRouter, Depends, Query, status
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,14 +29,14 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post(
     "/register",
-    response_model=SuccessResponse[User],
+    response_model=SuccessResponse[UserSchema],
     status_code=status.HTTP_201_CREATED,
     summary="Register a New User",
     description="Register a new user with email, username, and password.",
 )
 async def register(
     user_data: UserCreate, session: AsyncSession = Depends(get_db)
-) -> SuccessResponse[User]:
+) -> SuccessResponse[UserSchema]:
     """
     Register a new user in the system.
 
@@ -46,14 +47,14 @@ async def register(
     Returns:
         SuccessResponse[User]: A response containing the registered user data.
     """
-    user = await register_user(session, user_data)
+    user = UserSchema.model_validate(await register_user(session, user_data))
     logger.info("User registered successfully: %s", user.email)
     return SuccessResponse(message="User registered successfully", data=user)
 
 
 @router.get(
     "/{user_id}",
-    response_model=SuccessResponse[User],
+    response_model=SuccessResponse[UserSchema],
     summary="Get User by ID",
     description="Retrieve a user by their ID.",
 )
@@ -61,7 +62,7 @@ async def get_user_by_id(
     user_id: int,
     session: AsyncSession = Depends(get_db),
     _: int = Depends(get_authenticated_user_id),
-) -> SuccessResponse[User]:
+) -> SuccessResponse[UserSchema]:
     """
     Retrieve a user by their unique ID.
 
@@ -73,14 +74,14 @@ async def get_user_by_id(
     Returns:
         SuccessResponse[User]: A response containing the user data.
     """
-    user = await get_user(session, user_id)
+    user = UserSchema.model_validate(await get_user(session, user_id))
     logger.info("User retrieved successfully: ID %d", user_id)
     return SuccessResponse(message="User retrieved successfully", data=user)
 
 
 @router.get(
     "/by-email/{email}",
-    response_model=SuccessResponse[User],
+    response_model=SuccessResponse[UserSchema],
     summary="Get User by Email",
     description="Retrieve a user by their email address.",
 )
@@ -88,7 +89,7 @@ async def get_by_email(
     email: EmailStr,
     session: AsyncSession = Depends(get_db),
     _: int = Depends(get_authenticated_user_id),
-) -> SuccessResponse[User]:
+) -> SuccessResponse[UserSchema]:
     """
     Retrieve a user by their email address.
 
@@ -100,14 +101,14 @@ async def get_by_email(
     Returns:
         SuccessResponse[User]: A response containing the user data.
     """
-    user = await get_user_by_email(session, email)
+    user = UserSchema.model_validate(await get_user_by_email(session, email))
     logger.info("User retrieved by email successfully: %s", email)
     return SuccessResponse(message="User retrieved successfully", data=user)
 
 
 @router.get(
     "/by-username/{username}",
-    response_model=SuccessResponse[User],
+    response_model=SuccessResponse[UserSchema],
     summary="Get User by Username",
     description="Retrieve a user by their username.",
 )
@@ -115,7 +116,7 @@ async def get_by_username(
     username: str,
     session: AsyncSession = Depends(get_db),
     _: int = Depends(get_authenticated_user_id),
-) -> SuccessResponse[User]:
+) -> SuccessResponse[UserSchema]:
     """
     Retrieve a user by their username.
 
@@ -127,14 +128,14 @@ async def get_by_username(
     Returns:
         SuccessResponse[User]: A response containing the user data.
     """
-    user = await get_user_by_username(session, username)
+    user = UserSchema.model_validate(await get_user_by_username(session, username))
     logger.info("User retrieved by username successfully: %s", username)
     return SuccessResponse(message="User retrieved successfully", data=user)
 
 
 @router.get(
     "/",
-    response_model=PaginatedResponse[User],
+    response_model=PaginatedResponse[UserSchema],
     summary="List Users",
     description="Retrieve a paginated list of users.",
 )
@@ -145,7 +146,7 @@ async def get_users(
     ),
     session: AsyncSession = Depends(get_db),
     _: int = Depends(get_authenticated_user_id),
-) -> PaginatedResponse[User]:
+) -> PaginatedResponse[UserSchema]:
     """
     Retrieve a paginated list of users.
 
@@ -159,6 +160,7 @@ async def get_users(
         PaginatedResponse[User]: A response containing a list of users along with pagination details.
     """
     users, total = await list_users(session, skip=skip, limit=limit)
+    users = [UserSchema.model_validate(user) for user in users]
     page = skip // limit + 1 if limit > 0 else 1
     logger.info("Users listed: page %d, page size %d", page, limit)
     return PaginatedResponse(
@@ -172,7 +174,7 @@ async def get_users(
 
 @router.put(
     "/{user_id}",
-    response_model=SuccessResponse[User],
+    response_model=SuccessResponse[UserSchema],
     summary="Update User",
     description="Update a user's information by their ID.",
 )
@@ -181,7 +183,7 @@ async def update_user_by_id(
     user_data: UserUpdate,
     session: AsyncSession = Depends(get_db),
     _: int = Depends(get_authenticated_user_id),
-) -> SuccessResponse[User]:
+) -> SuccessResponse[UserSchema]:
     """
     Update a user's information.
 
@@ -194,7 +196,7 @@ async def update_user_by_id(
     Returns:
         SuccessResponse[User]: A response containing the updated user data.
     """
-    user = await update_user(session, user_id, user_data)
+    user = UserSchema.model_validate(await update_user(session, user_id, user_data))
     logger.info("User updated successfully: ID %d", user_id)
     return SuccessResponse(message="User updated successfully", data=user)
 
