@@ -15,10 +15,22 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const response = await networkAdapter.get('api/users/auth-user');
-      if (response && response.data) {
-        setIsAuthenticated(response.data.isAuthenticated);
-        setUserDetails(response.data.userDetails);
+      try {
+        const response = await networkAdapter.get('api/v1/users/auth-user', {}, { notUseMirage: true }); // TODO: Remove notUseMirage
+        if (response && response.data) {
+          setIsAuthenticated(response.data.isAuthenticated);
+          setUserDetails(response.data.userDetails);
+          console.log('User details logouuuuuuuuuutttttttttt');
+        }
+      } catch (error) {
+        // If a 401 error is returned, set the user as logged out
+        if (error.response && error.response.status === 401) {
+          setIsAuthenticated(false);
+          setUserDetails(null);
+          console.log('User details logouuuuuuuuuutttttttttt75489375984375894375893');
+        } else {
+          console.error('Error checking authentication status:', error);
+        }
       }
     };
 
@@ -30,9 +42,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, userDetails, triggerAuthCheck }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, userDetails, triggerAuthCheck }}>
       {children}
     </AuthContext.Provider>
   );

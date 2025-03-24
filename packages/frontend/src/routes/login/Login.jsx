@@ -44,7 +44,7 @@ const Login = () => {
     e.preventDefault();
 
     if (validations.validate('email', loginData.email)) {
-      const response = await networkAdapter.post('api/users/login', loginData);
+      const response = await networkAdapter.post('api/v1/users/login', loginData);
       if (response && response.data.token) {
         context.triggerAuthCheck();
         navigate('/user-profile');

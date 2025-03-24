@@ -44,7 +44,9 @@ export function makeServer({ environment = 'development' } = {}) {
       // Add a logged-in user state to the server
       let loggedInUser = null;
 
-      this.passthrough('http://localhost:4000/*');
+      this.passthrough('http://localhost:8000/api/v1/users/login');
+      this.passthrough('http://localhost:8000/api/v1/users/auth-user');
+      this.passthrough('http://localhost:8000/api/v1/users/logout');
 
       this.get('/users/auth-user', () => {
         if (loggedInUser) {
