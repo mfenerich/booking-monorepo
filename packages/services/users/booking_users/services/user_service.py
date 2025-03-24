@@ -4,14 +4,13 @@ from booking_api import ConflictError, NotFoundError
 from booking_auth import get_password_hash
 from booking_db import transaction
 from booking_shared_models.models.user import User
-from booking_shared_models.schemas import User as UserSchema
 from booking_shared_models.schemas import UserCreate, UserUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .repository import user_repository
 
 
-async def register_user(session: AsyncSession, user_data: UserCreate) -> UserSchema:
+async def register_user(session: AsyncSession, user_data: UserCreate) -> User:
     """
     Register a new user.
 
@@ -52,8 +51,7 @@ async def register_user(session: AsyncSession, user_data: UserCreate) -> UserSch
             },
         )
 
-    # Convert to schema and return
-    return UserSchema.model_validate(user)
+    return user
 
 
 async def get_user(session: AsyncSession, user_id: int) -> User:
@@ -112,16 +110,16 @@ async def get_user_by_username(session: AsyncSession, username: str) -> User:
     Raises:
         NotFoundError: If user with the given username does not exist
     """
-    user_model = await user_repository.get_by_username(session, username)
-    if not user_model:
+    user = await user_repository.get_by_username(session, username)
+    if not user:
         raise NotFoundError(f"User with username {username} not found")
 
-    return user_model
+    return user
 
 
 async def list_users(
     session: AsyncSession, skip: int = 0, limit: int = 100
-) -> tuple[list[UserSchema], int]:
+) -> tuple[list[User], int]:
     """
     List users with pagination.
 
@@ -136,12 +134,12 @@ async def list_users(
     users = await user_repository.list(session, skip=skip, limit=limit)
     total = await user_repository.count(session)
 
-    return [UserSchema.model_validate(user) for user in users], total
+    return users, total
 
 
 async def update_user(
     session: AsyncSession, user_id: int, user_data: UserUpdate
-) -> UserSchema:
+) -> User:
     """
     Update user.
 
@@ -193,7 +191,7 @@ async def update_user(
 
     # If no updates, return existing user
     if not update_data:
-        return UserSchema.model_validate(existing_user)
+        return existing_user
 
     # Update user with transaction
     async with transaction(session):
@@ -202,7 +200,7 @@ async def update_user(
             # This should not happen normally since we checked existence
             raise NotFoundError(f"User with ID {user_id} not found")
 
-    return UserSchema.model_validate(updated_user)
+    return updated_user
 
 
 async def delete_user(session: AsyncSession, user_id: int) -> bool:
