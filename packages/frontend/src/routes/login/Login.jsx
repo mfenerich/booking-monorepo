@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
 
     if (validations.validate('email', loginData.email)) {
-      const response = await networkAdapter.post('api/v1/users/login', loginData);
+      const response = await networkAdapter.post('api/v1/users/login', loginData, { notUseMirage: true });
       if (response && response.data.token) {
         // Wait for the auth check to finish updating the state
         await context.triggerAuthCheck();

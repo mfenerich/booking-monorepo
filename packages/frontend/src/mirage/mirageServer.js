@@ -43,10 +43,19 @@ export function makeServer({ environment = 'development' } = {}) {
 
       // Add a logged-in user state to the server
       let loggedInUser = null;
-
-      this.passthrough('http://localhost:8000/api/v1/users/login');
-      this.passthrough('http://localhost:8000/api/v1/users/auth-user');
-      this.passthrough('http://localhost:8000/api/v1/users/logout');
+      
+      // Important: Reset namespace to allow full URL passthrough
+      this.urlPrefix = '';     // Reset any URL prefix
+      this.namespace = '';     // Reset namespace
+      
+      // Pass through ALL requests to your actual backend services
+      this.passthrough((request) => {
+        return request.url.includes('localhost:8001') || 
+               request.url.includes('localhost:8000');
+      });
+      
+      // Re-establish namespace for Mirage routes
+      this.namespace = 'api';
 
       this.get('/users/auth-user', () => {
         if (loggedInUser) {

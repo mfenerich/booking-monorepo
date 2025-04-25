@@ -221,7 +221,7 @@ const HotelsSearch = () => {
       data: [],
       errors: [],
     });
-    const hotelsResultsResponse = await networkAdapter.get('/api/hotels', {
+    const hotelsResultsResponse = await networkAdapter.get('/api/v1/hotels', {
       filters: JSON.stringify(filters),
       currentPage: currentResultsPage,
       advancedFilters: JSON.stringify([
@@ -229,7 +229,8 @@ const HotelsSearch = () => {
           sortBy: sortByFilterValue.value,
         },
       ]),
-    });
+    }, { notUseMirage: true }); // TODO: Remove notUseMirage
+    console.log('hotelsResultsResponse', hotelsResultsResponse);
     if (hotelsResultsResponse) {
       setHotelsResults({
         isLoading: false,
@@ -243,7 +244,7 @@ const HotelsSearch = () => {
 
   const getVerticalFiltersData = async () => {
     const filtersDataResponse = await networkAdapter.get(
-      'api/hotels/verticalFilters'
+      'api/v1/hotels/verticalFilters', {}, { notUseMirage: true }
     );
     if (filtersDataResponse) {
       setFiltersData({
@@ -275,7 +276,7 @@ const HotelsSearch = () => {
   // Fetches the list of available cities
   const fetchAvailableCities = async () => {
     const availableCitiesResponse = await networkAdapter.get(
-      '/api/availableCities'
+      '/api/v1/availableCities', {}, { notUseMirage: true }
     );
     if (availableCitiesResponse) {
       setAvailableCities(availableCitiesResponse.data.elements);

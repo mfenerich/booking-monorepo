@@ -109,8 +109,8 @@ const Home = () => {
      */
     const getInitialData = async () => {
       const popularDestinationsResponse = await networkAdapter.get(
-        '/api/popularDestinations'
-      );
+        '/api/v1/popularDestinations', {}, { notUseMirage: true }
+      ); // TODO: remove notUseMirage
       const hotelsResultsResponse =
         await networkAdapter.get('/api/nearbyHotels');
 

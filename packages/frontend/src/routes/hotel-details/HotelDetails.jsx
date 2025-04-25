@@ -18,7 +18,7 @@ const HotelDetails = () => {
 
   useEffect(() => {
     const fetchHotelDetails = async () => {
-      const response = await networkAdapter.get(`/api/hotel/${hotelId}`);
+      const response = await networkAdapter.get(`/api/v1/hotel/${hotelId}`, {}, { notUseMirage: true }); // TODO: remove notUseMirage
       setHotelDetails({
         isLoading: false,
         data: response.data,

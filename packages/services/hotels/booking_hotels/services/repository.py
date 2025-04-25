@@ -6,7 +6,7 @@ from booking_db import Repository
 from booking_shared_models.models import Hotel, HotelBenefit, HotelImage, HotelReview
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import selectinload
 
 
 class HotelRepository(Repository[Hotel]):

@@ -1,26 +1,26 @@
 """Schema validation models package."""
 
-from .user import User, UserBase, UserCreate, UserInDB, UserUpdate
 from .hotel import (
     Hotel,
     HotelBase,
+    HotelBenefit,
+    HotelBenefitBase,
+    HotelBenefitCreate,
+    HotelBookingEnquiry,
     HotelCreate,
-    HotelInList,
     HotelDetailed,
     HotelImage,
     HotelImageBase,
     HotelImageCreate,
-    HotelBenefit,
-    HotelBenefitBase,
-    HotelBenefitCreate,
+    HotelInList,
     HotelReview,
     HotelReviewBase,
     HotelReviewCreate,
-    HotelBookingEnquiry,
     HotelReviewsResponse,
     ReviewMetadata,
     ReviewPagination,
 )
+from .user import User, UserBase, UserCreate, UserInDB, UserUpdate
 
 __all__ = [
     # User schemas

@@ -1,4 +1,13 @@
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -21,9 +30,15 @@ class Hotel(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    images = relationship("HotelImage", back_populates="hotel", cascade="all, delete-orphan")
-    benefits = relationship("HotelBenefit", back_populates="hotel", cascade="all, delete-orphan")
-    reviews = relationship("HotelReview", back_populates="hotel", cascade="all, delete-orphan")
+    images = relationship(
+        "HotelImage", back_populates="hotel", cascade="all, delete-orphan"
+    )
+    benefits = relationship(
+        "HotelBenefit", back_populates="hotel", cascade="all, delete-orphan"
+    )
+    reviews = relationship(
+        "HotelReview", back_populates="hotel", cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Hotel(id={self.id}, title={self.title}, city={self.city})>"
@@ -35,7 +50,9 @@ class HotelImage(Base):
     __tablename__ = "hotel_images"
 
     id = Column(Integer, primary_key=True, index=True)
-    hotel_id = Column(Integer, ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False)
+    hotel_id = Column(
+        Integer, ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False
+    )
     image_url = Column(String, nullable=False)
     accessible_text = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -53,7 +70,9 @@ class HotelBenefit(Base):
     __tablename__ = "hotel_benefits"
 
     id = Column(Integer, primary_key=True, index=True)
-    hotel_id = Column(Integer, ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False)
+    hotel_id = Column(
+        Integer, ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False
+    )
     benefit = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -70,7 +89,9 @@ class HotelReview(Base):
     __tablename__ = "hotel_reviews"
 
     id = Column(Integer, primary_key=True, index=True)
-    hotel_id = Column(Integer, ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False)
+    hotel_id = Column(
+        Integer, ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False
+    )
     reviewer_name = Column(String, nullable=False)
     rating = Column(Float, nullable=False)
     review = Column(Text, nullable=False)

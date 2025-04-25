@@ -4,16 +4,23 @@ import json
 import logging
 
 from booking_api import SuccessResponse
-from booking_api.responses import PaginatedResponse
 from booking_db import get_db
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..schemas import (AddReviewRequest, HotelBookingDetailsResponse,
-                       HotelDetailedResponse, HotelListItem,
-                       HotelReviewsDetailedResponse)
-from ..services import (add_hotel_review, get_available_cities,
-                        get_hotel_by_code, get_hotel_reviews, list_hotels)
+from ..schemas import (
+    AddReviewRequest,
+    HotelBookingDetailsResponse,
+    HotelDetailedResponse,
+    HotelListItem,
+)
+from ..services import (
+    add_hotel_review,
+    get_available_cities,
+    get_hotel_by_code,
+    get_hotel_reviews,
+    list_hotels,
+)
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -23,7 +30,8 @@ router = APIRouter(tags=["hotels"])
 
 @router.get(
     "/hotels",
-    response_model=PaginatedResponse[HotelListItem],
+    # Change response_model to match what your frontend expects
+    # response_model=PaginatedResponse[HotelListItem],
     summary="List Hotels",
     description="Retrieve a paginated list of hotels with filtering and sorting options.",
 )
@@ -32,19 +40,7 @@ async def get_hotels(
     advancedFilters: str = Query("[]"),
     currentPage: int = Query(1, ge=1),
     session: AsyncSession = Depends(get_db),
-) -> PaginatedResponse[HotelListItem]:
-    """
-    Get a list of hotels with filtering options.
-
-    Args:
-        filters: JSON string of filter criteria (city, star_ratings, etc.)
-        advancedFilters: JSON string of advanced filter options (sorting, etc.)
-        currentPage: Current page number (1-indexed)
-        session: Database session dependency
-
-    Returns:
-        PaginatedResponse with hotels list, metadata, and pagination info
-    """
+):
     try:
         # Parse filters
         filters_dict = json.loads(filters)
@@ -77,22 +73,28 @@ async def get_hotels(
                 price=price,
                 ratings=ratings,
                 city=hotel.city,
-                images=[{
-                    "imageUrl": image.image_url,
-                    "accessibleText": image.accessible_text
-                } for image in hotel.images],
+                images=[
+                    {
+                        "imageUrl": image.image_url,
+                        "accessibleText": image.accessible_text,
+                    }
+                    for image in hotel.images
+                ],
                 benefits=benefits,
             )
             hotels_list.append(hotel_item)
 
-        # Create a proper PaginatedResponse object
-        return PaginatedResponse(
-            message="Hotels retrieved successfully",
-            items=hotels_list,
-            page=pagination["currentPage"],
-            page_size=pagination["pageSize"],
-            total=total
-        )
+        # Return in the structure expected by frontend
+        return {
+            "errors": [],
+            "data": {"elements": hotels_list},
+            "metadata": {"totalResults": total},
+            "paging": {
+                "currentPage": pagination["currentPage"],
+                "totalPages": pagination["totalPages"],
+                "pageSize": pagination["pageSize"],
+            },
+        }
     except Exception as e:
         logger.error(f"Error listing hotels: {str(e)}")
         raise
@@ -124,7 +126,7 @@ async def get_hotel_detail(
 
         # Format response
         benefits = [benefit.benefit for benefit in hotel.benefits]
-        
+
         # Default description (to match frontend expectation)
         description = [
             "A serene stay awaits at our plush hotel, offering a blend of luxury and comfort with top-notch amenities.",
@@ -142,17 +144,16 @@ async def get_hotel_detail(
             price=str(hotel.price),
             ratings=str(hotel.ratings),
             city=hotel.city,
-            images=[{
-                "imageUrl": image.image_url,
-                "accessibleText": image.accessible_text
-            } for image in hotel.images],
+            images=[
+                {"imageUrl": image.image_url, "accessibleText": image.accessible_text}
+                for image in hotel.images
+            ],
             benefits=benefits,
             description=description,
         )
 
         return SuccessResponse(
-            message="Hotel details retrieved successfully",
-            data=hotel_detail
+            message="Hotel details retrieved successfully", data=hotel_detail
         )
     except Exception as e:
         logger.error(f"Error getting hotel details: {str(e)}")
@@ -195,8 +196,7 @@ async def get_hotel_booking_details(
         )
 
         return SuccessResponse(
-            message="Hotel booking details retrieved successfully",
-            data=booking_details
+            message="Hotel booking details retrieved successfully", data=booking_details
         )
     except Exception as e:
         logger.error(f"Error getting hotel booking details: {str(e)}")
@@ -251,11 +251,7 @@ async def get_hotel_review_list(
 
         return SuccessResponse(
             message="Hotel reviews retrieved successfully",
-            data={
-                "elements": reviews_list,
-                "metadata": metadata,
-                "paging": pagination
-            }
+            data={"elements": reviews_list, "metadata": metadata, "paging": pagination},
         )
     except Exception as e:
         logger.error(f"Error getting hotel reviews: {str(e)}")
@@ -301,9 +297,7 @@ async def add_review(
 
         return SuccessResponse(
             message="Review added successfully",
-            data={
-                "status": "Review added successfully"
-            }
+            data={"status": "Review added successfully"},
         )
     except Exception as e:
         logger.error(f"Error adding hotel review: {str(e)}")
@@ -333,10 +327,7 @@ async def get_cities(
         cities = await get_available_cities(session)
 
         return SuccessResponse(
-            message="Available cities retrieved successfully",
-            data={
-                "elements": cities
-            }
+            message="Available cities retrieved successfully", data={"elements": cities}
         )
     except Exception as e:
         logger.error(f"Error getting available cities: {str(e)}")
@@ -401,10 +392,7 @@ async def get_filter_options() -> SuccessResponse:
         ]
 
         return SuccessResponse(
-            message="Filter options retrieved successfully",
-            data={
-                "elements": filters
-            }
+            message="Filter options retrieved successfully", data={"elements": filters}
         )
     except Exception as e:
         logger.error(f"Error getting filter options: {str(e)}")
@@ -457,19 +445,20 @@ async def get_nearby_hotels(
                 price=price,
                 ratings=ratings,
                 city=hotel.city,
-                images=[{
-                    "imageUrl": image.image_url,
-                    "accessibleText": image.accessible_text
-                } for image in hotel.images],
+                images=[
+                    {
+                        "imageUrl": image.image_url,
+                        "accessibleText": image.accessible_text,
+                    }
+                    for image in hotel.images
+                ],
                 benefits=benefits,
             )
             hotels_list.append(hotel_item)
 
         return SuccessResponse(
             message="Nearby hotels retrieved successfully",
-            data={
-                "elements": hotels_list
-            }
+            data={"elements": hotels_list},
         )
     except Exception as e:
         logger.error(f"Error getting nearby hotels: {str(e)}")
@@ -521,9 +510,7 @@ async def get_popular_destinations() -> SuccessResponse:
 
         return SuccessResponse(
             message="Popular destinations retrieved successfully",
-            data={
-                "elements": destinations
-            }
+            data={"elements": destinations},
         )
     except Exception as e:
         logger.error(f"Error getting popular destinations: {str(e)}")
