@@ -1,0 +1,91 @@
+{
+  "name": "hotels",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "packages/services/hotels/booking_hotels",
+  "targets": {
+    "lock": {
+      "executor": "@nxlv/python:lock",
+      "options": {
+        "update": false
+      }
+    },
+    "sync": {
+      "executor": "@nxlv/python:sync",
+      "options": {}
+    },
+    "add": {
+      "executor": "@nxlv/python:add",
+      "options": {}
+    },
+    "update": {
+      "executor": "@nxlv/python:update",
+      "options": {}
+    },
+    "remove": {
+      "executor": "@nxlv/python:remove",
+      "options": {}
+    },
+    "build": {
+      "executor": "@nxlv/python:build",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "outputPath": "packages/services/hotels/dist",
+        "publish": false,
+        "lockedVersions": true,
+        "bundleLocalDependencies": true
+      },
+      "cache": true
+    },
+    "lint": {
+      "executor": "@nxlv/python:flake8",
+      "outputs": [
+        "{workspaceRoot}/reports/packages/services/hotels/pylint.txt"
+      ],
+      "options": {
+        "outputFile": "reports/packages/services/hotels/pylint.txt"
+      },
+      "cache": true
+    },
+    "test": {
+      "executor": "@nxlv/python:run-commands",
+      "outputs": [
+        "{workspaceRoot}/reports/packages/services/hotels/unittests",
+        "{workspaceRoot}/coverage/packages/services/hotels"
+      ],
+      "options": {
+        "command": "poetry run pytest tests/",
+        "cwd": "packages/services/hotels"
+      },
+      "cache": true
+    },
+    "fix-all": {
+      "executor": "@nxlv/python:run-commands",
+      "options": {
+        "commands": [
+          "poetry run isort booking_hotels tests",
+          "poetry run autopep8 --in-place --recursive booking_hotels tests",
+          "poetry run black booking_hotels tests"
+        ],
+        "cwd": "packages/services/hotels",
+        "parallel": false
+      }
+    },
+    "install": {
+      "executor": "@nxlv/python:install",
+      "options": {
+        "silent": false,
+        "args": "",
+        "cacheDir": ".cache/pypoetry",
+        "verbose": false,
+        "debug": false
+      }
+    }
+  },
+  "tags": [],
+  "release": {
+    "version": {
+      "generator": "@nxlv/python:release-version"
+    }
+  }
+}

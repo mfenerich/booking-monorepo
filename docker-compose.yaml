@@ -45,6 +45,40 @@ services:
     ports:
       - "8000:8000"
 
+  hotels-service:
+    build:
+      context: .
+      dockerfile: ./packages/services/hotels/Dockerfile
+    container_name: booking-hotels-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://booking_user:booking_password@postgres:5432/booking_db
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: booking_user
+      DATABASE_PASSWORD: booking_password
+      DATABASE_NAME: booking_db
+      JWT_SECRET_KEY: jwt_secret_key_for_development
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      HOTELS_SERVICE_URL: http://hotels-service:8001
+      DEBUG: "true"
+      CORS_ORIGINS: '["http://localhost:3000", "http://frontend:3000", "http://0.0.0.0:3000", "http://localhost:8000", "http://localhost:8080"]'
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./packages/services/hotels/booking_hotels:/app/packages/services/hotels/booking_hotels
+      - ./packages/libs/api/booking_api:/app/packages/libs/api/booking_api
+      - ./packages/libs/auth/booking_auth:/app/packages/libs/auth/booking_auth
+    command: >
+      bash -c "
+        /entrypoint.sh
+      "
+    working_dir: /app/packages/services/hotels
+
   # Frontend service
   frontend:
     build:
